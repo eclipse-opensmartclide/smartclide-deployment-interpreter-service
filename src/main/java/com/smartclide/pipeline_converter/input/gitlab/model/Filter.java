@@ -2,6 +2,7 @@ package com.smartclide.pipeline_converter.input.gitlab.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -54,5 +55,23 @@ public class Filter {
 	}
 	public void setChanges(List<String> changes) {
 		this.changes = changes;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(changes, kubernetes, refs, variables);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Filter other = (Filter) obj;
+		return Objects.equals(changes, other.changes) && Objects.equals(kubernetes, other.kubernetes)
+				&& Objects.equals(refs, other.refs) && Objects.equals(variables, other.variables);
 	}
 }

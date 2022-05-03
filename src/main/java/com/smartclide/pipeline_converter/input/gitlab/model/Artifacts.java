@@ -1,6 +1,7 @@
 package com.smartclide.pipeline_converter.input.gitlab.model;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -272,29 +273,23 @@ public class Artifacts {
     }
 
     @Override
-    public int hashCode() {
-        int result = 1;
-        result = ((result* 31)+((this.reports == null)? 0 :this.reports.hashCode()));
-        result = ((result* 31)+((this.exposeAs == null)? 0 :this.exposeAs.hashCode()));
-        result = ((result* 31)+((this.paths == null)? 0 :this.paths.hashCode()));
-        result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
-        result = ((result* 31)+((this.untracked == null)? 0 :this.untracked.hashCode()));
-        result = ((result* 31)+((this.exclude == null)? 0 :this.exclude.hashCode()));
-        result = ((result* 31)+((this.expireIn == null)? 0 :this.expireIn.hashCode()));
-        result = ((result* 31)+((this.when == null)? 0 :this.when.hashCode()));
-        return result;
-    }
+	public int hashCode() {
+		return Objects.hash(exclude, expireIn, exposeAs, name, paths, reports, untracked, when);
+	}
 
-    @Override
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if ((other instanceof Artifacts) == false) {
-            return false;
-        }
-        Artifacts rhs = ((Artifacts) other);
-        return (((((((((this.reports == rhs.reports)||((this.reports!= null)&&this.reports.equals(rhs.reports)))&&((this.exposeAs == rhs.exposeAs)||((this.exposeAs!= null)&&this.exposeAs.equals(rhs.exposeAs))))&&((this.paths == rhs.paths)||((this.paths!= null)&&this.paths.equals(rhs.paths))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.untracked == rhs.untracked)||((this.untracked!= null)&&this.untracked.equals(rhs.untracked))))&&((this.exclude == rhs.exclude)||((this.exclude!= null)&&this.exclude.equals(rhs.exclude))))&&((this.expireIn == rhs.expireIn)||((this.expireIn!= null)&&this.expireIn.equals(rhs.expireIn))))&&((this.when == rhs.when)||((this.when!= null)&&this.when.equals(rhs.when))));
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Artifacts other = (Artifacts) obj;
+		return Objects.equals(exclude, other.exclude) && Objects.equals(expireIn, other.expireIn)
+				&& Objects.equals(exposeAs, other.exposeAs) && Objects.equals(name, other.name)
+				&& Objects.equals(paths, other.paths) && Objects.equals(reports, other.reports)
+				&& Objects.equals(untracked, other.untracked) && when == other.when;
+	}
 
 }

@@ -2,6 +2,8 @@ package com.smartclide.pipeline_converter.input.gitlab.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
 import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -235,29 +237,25 @@ public class Release {
         return sb.toString();
     }
 
-    @Override
-    public int hashCode() {
-        int result = 1;
-        result = ((result* 31)+((this.ref == null)? 0 :this.ref.hashCode()));
-        result = ((result* 31)+((this.releasedAt == null)? 0 :this.releasedAt.hashCode()));
-        result = ((result* 31)+((this.assets == null)? 0 :this.assets.hashCode()));
-        result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
-        result = ((result* 31)+((this.description == null)? 0 :this.description.hashCode()));
-        result = ((result* 31)+((this.tagName == null)? 0 :this.tagName.hashCode()));
-        result = ((result* 31)+((this.milestones == null)? 0 :this.milestones.hashCode()));
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(assets, description, milestones, name, ref, releasedAt, tagName);
+	}
 
-    @Override
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if ((other instanceof Release) == false) {
-            return false;
-        }
-        Release rhs = ((Release) other);
-        return ((((((((this.ref == rhs.ref)||((this.ref!= null)&&this.ref.equals(rhs.ref)))&&((this.releasedAt == rhs.releasedAt)||((this.releasedAt!= null)&&this.releasedAt.equals(rhs.releasedAt))))&&((this.assets == rhs.assets)||((this.assets!= null)&&this.assets.equals(rhs.assets))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.description == rhs.description)||((this.description!= null)&&this.description.equals(rhs.description))))&&((this.tagName == rhs.tagName)||((this.tagName!= null)&&this.tagName.equals(rhs.tagName))))&&((this.milestones == rhs.milestones)||((this.milestones!= null)&&this.milestones.equals(rhs.milestones))));
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Release other = (Release) obj;
+		return Objects.equals(assets, other.assets) && Objects.equals(description, other.description)
+				&& Objects.equals(milestones, other.milestones) && Objects.equals(name, other.name)
+				&& Objects.equals(ref, other.ref) && Objects.equals(releasedAt, other.releasedAt)
+				&& Objects.equals(tagName, other.tagName);
+	}
+
 
 }

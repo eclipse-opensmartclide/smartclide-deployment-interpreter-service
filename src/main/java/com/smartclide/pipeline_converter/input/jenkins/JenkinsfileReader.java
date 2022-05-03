@@ -1,13 +1,15 @@
 package com.smartclide.pipeline_converter.input.jenkins;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,35 +18,60 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.smartclide.pipeline_converter.input.gitlab.model.Pipeline;
 import com.smartclide.pipeline_converter.output.GitlabCIOutputConverter;
 
+@Component
 public class JenkinsfileReader {
 
+	private static final String ONE_LINE_NODE = "^\\s*(\\w+[^\\{]*?)\\{(.*?)\\}$";
 	private static String SECTION_OPENING="^\\s*(\\w+[^\\{]*)\\{\\s*$";
 	private static String SECTION_CLOSING="^\\s*}\\s*$";
-	private static String SECTION_TYPE_AND_NAME="^\\s*(\\w+)\\s*(\\(\\'?([^\\)\\']*)\\'?\\))?\\s*\\{$";
+	private static String SECTION_TYPE_AND_NAME="^\\s*(\\w+)\\s*(\\(\\'?(.*?)\\'?\\))?\\s*\\{$";
 	
 	public Node read(File file) throws FileNotFoundException {
-	    Scanner sc = new Scanner(file);
+	    return read(new FileInputStream(file));
+	}
+	
+	public Node read(InputStream is) {
+		Scanner sc = new Scanner(is);
 	    Node root = null;
 	    Node current = null;
 	    
 	    try(sc){
 		    while (sc.hasNextLine()) {
 		    	String line = sc.nextLine().strip();
-		    	if(line.matches(SECTION_OPENING)) {
-		    		current = createNode(line, current);
-		    	}else if(line.matches(SECTION_CLOSING)) {
-		    		if(current.getParent().isEmpty()) {
-		    			root = current;
-		    		}
-		    		current = current.getParent().orElse(null);
-		    	}else {
-		    		if(current != null) {
-		    			current.getContent().add(line.stripLeading());
-		    		}
+		    	if(line.isBlank()||
+		    			line.startsWith("#")||
+		    			line.startsWith("//")||
+		    			line.startsWith("/*")||
+		    			line.startsWith("*")) {
+		    		continue;
 		    	}
+		    	current = processLine(current, line);
+		    	if(current!=null && current.getParent().isEmpty()) {
+		    		root = current;
+		    	}
+		    	
 		    }
 	    }
 	    return root;
+	}
+
+	private Node processLine(Node current, String line) {
+		if(line.matches(ONE_LINE_NODE)) {
+			String[] lines = line.split("(?<=\\{)|(?=\\})");
+			for(int i=0;i<lines.length;i++) {
+				current = processLine(current, lines[i]);
+			}
+		}
+		else if(line.matches(SECTION_OPENING)) {
+			current = createNode(line, current);
+		}else if(line.matches(SECTION_CLOSING)) {
+			current = current.getParent().orElse(null);
+		}else {
+			if(current != null) {
+				current.getContent().add(line);
+			}
+		}
+		return current;
 	}
 	
 	private Node createNode(String line, Node current) {

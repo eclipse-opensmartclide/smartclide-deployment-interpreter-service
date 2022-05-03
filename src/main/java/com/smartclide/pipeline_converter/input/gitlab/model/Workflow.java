@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -63,24 +65,21 @@ public class Workflow {
         return sb.toString();
     }
 
-    @Override
-    public int hashCode() {
-        int result = 1;
-        result = ((result* 31)+((this.rules == null)? 0 :this.rules.hashCode()));
-        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(additionalProperties, rules);
+	}
 
-    @Override
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if ((other instanceof Workflow) == false) {
-            return false;
-        }
-        Workflow rhs = ((Workflow) other);
-        return (((this.rules == rhs.rules)||((this.rules!= null)&&this.rules.equals(rhs.rules)))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))));
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Workflow other = (Workflow) obj;
+		return Objects.equals(additionalProperties, other.additionalProperties) && Objects.equals(rules, other.rules);
+	}
 
 }

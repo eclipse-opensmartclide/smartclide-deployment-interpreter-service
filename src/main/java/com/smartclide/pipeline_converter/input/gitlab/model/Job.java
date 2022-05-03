@@ -1,8 +1,10 @@
 package com.smartclide.pipeline_converter.input.gitlab.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,27 +32,27 @@ public class Job {
 	@JsonIgnore
 	String name;
 	DockerImage image;
-	List<DockerImage> services;
-	List<String> beforeScript;
-	List<String> afterScript;
-	List<Rule> rules;
-	Map<String, String> variables;
-	List<CacheEntry> cache;
-	List<CacheEntry> secrets;
+	List<DockerImage> services = new ArrayList<>();
+	List<String> beforeScript = new ArrayList<>();
+	List<String> afterScript = new ArrayList<>();
+	List<Rule> rules = new ArrayList<>();
+	Map<String, String> variables = new HashMap<>();
+	List<CacheEntry> cache = new ArrayList<>();
+	List<CacheEntry> secrets = new ArrayList<>();
 	@JsonDeserialize()
-	List<String> script;
+	List<String> script = new ArrayList<>();
 	String stage;
 	Filter only;
 	@JsonProperty("extends")
-	List<String> _extends = new ArrayList<String>();
-	List<BaseJobDependency> needs;
+	List<String> _extends = new ArrayList<>();
+	List<BaseJobDependency> needs = new ArrayList<>();
 	Filter except;
-	List<String> tags;
+	List<String> tags = new ArrayList<>();
 	AllowFailure allowFailure;
 	String timeout;
 	RunConditions when;
 	String startIn;
-	List<String> dependencies;
+	List<String> dependencies = new ArrayList<>();
 	Artifacts artifacts;
 	Environment environment;
 	Release release;
@@ -66,14 +68,14 @@ public class Job {
 	}
 	
 	public Job(String name) {
-		this.name = name;
+		this.setName(name);
 	}
 	
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.replaceAll(" ", "_").replaceAll("[\"']", "");
 	}
 	public DockerImage getImage() {
 		return image;
@@ -271,4 +273,38 @@ public class Job {
 		}
 		return theFilter;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_extends, afterScript, allowFailure, artifacts, beforeScript, cache, coverage, dependencies,
+				environment, except, image, inherit, interruptible, name, needs, only, release, resource_group, retry,
+				rules, script, secrets, services, stage, startIn, tags, timeout, trigger, variables, when);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Job other = (Job) obj;
+		return Objects.equals(_extends, other._extends) && Objects.equals(afterScript, other.afterScript)
+				&& Objects.equals(allowFailure, other.allowFailure) && Objects.equals(artifacts, other.artifacts)
+				&& Objects.equals(beforeScript, other.beforeScript) && Objects.equals(cache, other.cache)
+				&& Objects.equals(coverage, other.coverage) && Objects.equals(dependencies, other.dependencies)
+				&& Objects.equals(environment, other.environment) && Objects.equals(except, other.except)
+				&& Objects.equals(image, other.image) && Objects.equals(inherit, other.inherit)
+				&& Objects.equals(interruptible, other.interruptible) && Objects.equals(name, other.name)
+				&& Objects.equals(needs, other.needs) && Objects.equals(only, other.only)
+				&& Objects.equals(release, other.release) && Objects.equals(resource_group, other.resource_group)
+				&& Objects.equals(retry, other.retry) && Objects.equals(rules, other.rules)
+				&& Objects.equals(script, other.script) && Objects.equals(secrets, other.secrets)
+				&& Objects.equals(services, other.services) && Objects.equals(stage, other.stage)
+				&& Objects.equals(startIn, other.startIn) && Objects.equals(tags, other.tags)
+				&& Objects.equals(timeout, other.timeout) && Objects.equals(trigger, other.trigger)
+				&& Objects.equals(variables, other.variables) && when == other.when;
+	}
+
 }

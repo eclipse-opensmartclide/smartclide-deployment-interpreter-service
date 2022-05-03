@@ -1,5 +1,7 @@
 package com.smartclide.pipeline_converter.input.gitlab.model;
 
+import java.util.Objects;
+
 public class Environment {
 	String name;
 	String url;
@@ -49,6 +51,24 @@ public class Environment {
 	}
 	public void setDeploymentTier(String deploymentTier) {
 		this.deploymentTier = deploymentTier;
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(action, autoStopIn, deploymentTier, kubernetes, name, onStop, url);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Environment other = (Environment) obj;
+		return Objects.equals(action, other.action) && Objects.equals(autoStopIn, other.autoStopIn)
+				&& Objects.equals(deploymentTier, other.deploymentTier) && Objects.equals(kubernetes, other.kubernetes)
+				&& Objects.equals(name, other.name) && Objects.equals(onStop, other.onStop)
+				&& Objects.equals(url, other.url);
 	}
 	
 }

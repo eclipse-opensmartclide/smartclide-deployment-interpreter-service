@@ -1,5 +1,7 @@
 package com.smartclide.pipeline_converter.input.gitlab.model;
 
+import java.util.Objects;
+
 public class MultiProjectTrigger implements Trigger{
 	String project;
 	String branch;
@@ -21,5 +23,21 @@ public class MultiProjectTrigger implements Trigger{
 	}
 	public void setStrategy(String strategy) {
 		this.strategy = strategy;
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(branch, project, strategy);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MultiProjectTrigger other = (MultiProjectTrigger) obj;
+		return Objects.equals(branch, other.branch) && Objects.equals(project, other.project)
+				&& Objects.equals(strategy, other.strategy);
 	}
 }
