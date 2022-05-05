@@ -56,15 +56,16 @@ public class JenkinsfileReader {
 	}
 
 	private Node processLine(Node current, String line) {
-		if(line.matches(ONE_LINE_NODE)) {
+		String tester = line.replaceAll("\\$\\{.*?\\}", "VAR");
+		if(tester.matches(ONE_LINE_NODE)) {
 			String[] lines = line.split("(?<=\\{)|(?=\\})");
 			for(int i=0;i<lines.length;i++) {
 				current = processLine(current, lines[i]);
 			}
 		}
-		else if(line.matches(SECTION_OPENING)) {
+		else if(tester.matches(SECTION_OPENING)) {
 			current = createNode(line, current);
-		}else if(line.matches(SECTION_CLOSING)) {
+		}else if(tester.matches(SECTION_CLOSING)) {
 			current = current.getParent().orElse(null);
 		}else {
 			if(current != null) {
