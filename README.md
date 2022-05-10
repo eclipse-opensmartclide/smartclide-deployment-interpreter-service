@@ -1,1 +1,1 @@
-# smartclide-deployment-interpreter-theia
+# smartclide-deployment-interpreter-service
