@@ -1,15 +1,12 @@
 package com.smartclide.pipeline_converter.controller;
 
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,11 +17,11 @@ import com.smartclide.pipeline_converter.service.PipelineDescriptorConversionSer
 
 @RestController
 public class PipelineConverterController {
-//	private static final Logger logger = LoggerFactory.getLogger(PipelineConverterController.class);
 	
 	@Autowired
 	PipelineDescriptorConversionService conversionService;
 	
+	@CrossOrigin("*")
 	@PostMapping("/convertFile")
     public ResponseEntity<Resource> uploadFile(@RequestParam("file") MultipartFile file) {
 		try {
