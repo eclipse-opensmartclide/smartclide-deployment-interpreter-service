@@ -12,7 +12,6 @@
 	<artifactId>deployment-interpreter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>deployment-interpreter</name>
-	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -33,11 +32,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
 		</dependency>
@@ -45,11 +39,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>help</groupId>
-            <artifactId>help</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
@@ -63,26 +52,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>org.jsonschema2pojo</groupId>-->
-<!--				<artifactId>jsonschema2pojo-maven-plugin</artifactId>-->
-<!--				<version>1.1.1</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>generateClassesFromSchema</id>-->
-<!--						<phase>generate-sources</phase>-->
-<!--						<goals>-->
-<!--							<goal>generate</goal>-->
-<!--						</goals>-->
-<!--			-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--				<configuration>-->
-<!--					<sourceDirectory>src/main/resources/schema</sourceDirectory>-->
-<!--					<outputDirectory>src/main/java/com/smartclide/pipeline_converter/input/model</outputDirectory>-->
-<!--					<customRuleFactory>help.rulefactory.MyRuleFactory</customRuleFactory>-->
-<!--				</configuration>-->
-<!--			</plugin>-->
 		</plugins>
 	</build>
 
