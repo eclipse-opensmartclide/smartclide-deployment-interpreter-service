@@ -1,15 +1,22 @@
 package com.smartclide.pipeline_converter.input.jenkins.model;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder()
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pipeline {
-	Agent agent;
-	Map<String, String> environment = new LinkedHashMap<>();
-	List<Stage> stages = new ArrayList<>();
-	Post post;
-	Options options;
+	private Agent agent;
+	private Map<String, String> environment;
+	private List<Stage> stages;
+	private Post post;
+	private Options options;
 
 }

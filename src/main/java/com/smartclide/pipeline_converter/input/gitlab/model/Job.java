@@ -33,13 +33,15 @@ public class Job {
 	String name;
 	DockerImage image;
 	List<DockerImage> services = new ArrayList<>();
+	@JsonProperty("before_script")
 	List<String> beforeScript = new ArrayList<>();
+	@JsonProperty("after_script")
 	List<String> afterScript = new ArrayList<>();
 	List<Rule> rules = new ArrayList<>();
 	Map<String, String> variables = new HashMap<>();
 	List<CacheEntry> cache = new ArrayList<>();
 	List<CacheEntry> secrets = new ArrayList<>();
-	@JsonDeserialize()
+	//@JsonDeserialize()
 	List<String> script = new ArrayList<>();
 	String stage;
 	Filter only;

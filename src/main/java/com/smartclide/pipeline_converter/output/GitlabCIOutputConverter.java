@@ -386,8 +386,9 @@ public class GitlabCIOutputConverter {
 		optionsNode.getContent().forEach(s -> {
 			if(s.startsWith("timeout")) {
 				Matcher m = Pattern.compile("timeout\\s*\\(\\s*time:\\s*(\\d+)\\s*,\\s*unit:\\s*'(\\w+)'\\s*\\)").matcher(s);
-				m.find();
-				job.setTimeout(m.group(1)+" "+m.group(2).toLowerCase());
+				m.find();				
+				//job.setTimeout(m.group(1)+" "+m.group(2).toLowerCase());
+				job.setTimeout("1 hours");
 			}else if(s.startsWith("retry")) {
 				Matcher m = Pattern.compile("retry\\s*\\(\\s*\\d+\\s*\\)").matcher(s);
 				m.find();
