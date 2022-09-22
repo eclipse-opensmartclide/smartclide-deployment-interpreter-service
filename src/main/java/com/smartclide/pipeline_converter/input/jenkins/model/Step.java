@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder()
 @NoArgsConstructor
 @AllArgsConstructor
-public class Docker {
-	private String image;
-	private List<String> args;
+public class Step {	
+	private List<String> script;
 }

@@ -1,5 +1,15 @@
 package com.smartclide.pipeline_converter.input.jenkins.model;
 
-public class Options {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder()
+@NoArgsConstructor
+@AllArgsConstructor
+public class Options {
+	private String timeout;
+	private Retry retry;
 }
