@@ -1,0 +1,19 @@
+variables:
+  IMAGE: readMavenPom().getArtifactId()
+  VERSION: readMavenPom().getVersion()
+default:
+  tags:
+    - docker
+  timeout: 1 hours
+stages:
+  - Build
+  - null
+  - Quality_Analysis
+  - Build_and_Publish_Image
+  - .post
+Build:
+  stage: Build
+  image:
+    name: maven:3.5.0-jdk-8
+  script:
+    - sh 'mvn clean findbugs:findbugs package'
