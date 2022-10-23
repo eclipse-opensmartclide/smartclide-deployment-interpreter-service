@@ -1,0 +1,51 @@
+variables:
+  VALUE_ONE: 1
+  VALUE_TWO: 2
+  VALUE_THREE: 3
+stages:
+  - A_stage_to_be_skipped
+  - BASIC_WHEN_-_Branch
+  - WHEN_EXPRESSION_with_AND
+  - WHEN_EXPRESSION_with_OR
+  - AllOf
+  - Not_AnyOf
+A_stage_to_be_skipped:
+  stage: A_stage_to_be_skipped
+  rules:
+    - if: ' false '
+  script:
+    - echo 'This step will never be run'
+BASIC_WHEN_-_Branch:
+  stage: BASIC_WHEN_-_Branch
+  script:
+    - echo 'BASIC WHEN - Master Branch!'
+  only:
+    refs:
+      - master
+WHEN_EXPRESSION_with_AND:
+  stage: WHEN_EXPRESSION_with_AND
+  rules:
+    - if: VALUE_ONE == '1' && VALUE_THREE == '3'
+  script:
+    - echo 'WHEN with AND expression works!'
+WHEN_EXPRESSION_with_OR:
+  stage: WHEN_EXPRESSION_with_OR
+  rules:
+    - if: VALUE_ONE == '1' || VALUE_THREE == '2'
+  script:
+    - echo 'WHEN with OR expression works!'
+AllOf:
+  stage: AllOf
+  rules:
+    - if: $VALUE_ONE==1 && $VALUE_TWO==2
+  script:
+    - echo "AllOf Works!!"
+Not_AnyOf:
+  stage: Not_AnyOf
+  rules:
+    - if: $CI_COMMIT_BRANCH == "development"
+      when: never
+    - if: $VALUE_TWO == 4
+      when: never
+  script:
+    - echo "Not AnyOf - Works!"

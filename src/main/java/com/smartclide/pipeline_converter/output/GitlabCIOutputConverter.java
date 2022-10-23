@@ -1,7 +1,6 @@
 package com.smartclide.pipeline_converter.output;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,45 +31,48 @@ public class GitlabCIOutputConverter {
 	private static Logger log = LoggerFactory.getLogger(GitlabCIOutputConverter.class);
 
 	public Pipeline convert(Node pipelineRoot) {
-		Pipeline pipeline = new Pipeline();
-		pipelineRoot.getContent().forEach(s -> {
-			if(!s.equals("agent any") && s.startsWith("agent")) {
-				pipeline.get_default().getTags().add(s.substring("agent ".length()));
-			}else {
-				log.info("Discarded content: "+ s);
-			}
-			//TODO verify if there can be more/different content at this level
-		});
-		
-		pipelineRoot.getChildren().forEach(node -> {
-			switch(node.getType()) {
-			case "agent": processAgentNode(pipeline.get_default(), node);break;
+		if(pipelineRoot != null) {
+			Pipeline pipeline = new Pipeline();
+			pipelineRoot.getContent().forEach(s -> {
+				if(!s.equals("agent any") && s.startsWith("agent")) {
+					pipeline.get_default().getTags().add(s.substring("agent ".length()));
+				}else {
+					log.info("Discarded content: "+ s);
+				}
+				//TODO verify if there can be more/different content at this level
+			});
 			
-			case "environment": pipeline.setVariables(processEnvironmentNode(node));break;
+			pipelineRoot.getChildren().forEach(node -> {
+				switch(node.getType()) {
+				case "agent": processAgentNode(pipeline.get_default(), node);break;
+				
+				case "environment": pipeline.setVariables(processEnvironmentNode(node));break;
 
-			case "stages": {
-				processStagesNode(node).forEach(job -> pipeline.addJob(job.getName(), job));
-				break;
-			}
+				case "stages": {
+					processStagesNode(node).forEach(job -> pipeline.addJob(job.getName(), job));
+					break;
+				}
+				
+				case "post": {
+					processPipelinePostNode(node).forEach(job -> pipeline.addJob(job.getName(), job));;
+					break;
+				}
+				
+				case "options": processOptionsNode(pipeline.get_default(), node);break;
+				
+				default: log.info("Discarded content: "+ node);
+				}
+			});
 			
-			case "post": {
-				processPipelinePostNode(node).forEach(job -> pipeline.addJob(job.getName(), job));;
-				break;
-			}
-			
-			case "options": processOptionsNode(pipeline.get_default(), node);break;
-			
-			default: log.info("Discarded content: "+ node);
-			}
-		});
-		
-		pipeline.getJobs().values().stream()
-		.map(Job::getStage)
-		.filter(Objects::nonNull)
-		.collect(Collectors.toCollection(LinkedHashSet::new))
-		.forEach(pipeline.getStages()::add);
+			pipeline.getJobs().values().stream()
+			.map(Job::getStage)
+			.filter(Objects::nonNull)
+			.collect(Collectors.toCollection(LinkedHashSet::new))
+			.forEach(pipeline.getStages()::add);
 
-		return pipeline;
+			return pipeline;
+		}
+		return null;
 	}
 
 	private List<Job> processStagesNode(Node stagesNode) {
