@@ -32,5 +32,5 @@ jobs:
           # build image
           docker build . --tag ghcr.io/eclipse-opensmartclide/smartclide/deployment_interpreter_service:$(date +'%Y-%m-%d')
           # push image
-          docker push ghcr.io/eclipse-researchlabs/smartclide/deployment_interpreter_service:$(date +'%Y-%m-%d')
+          docker push ghcr.io/eclipse-opensmartclide/smartclide/deployment_interpreter_service:$(date +'%Y-%m-%d')
       if: ${{ github.event_name == 'push' }}
