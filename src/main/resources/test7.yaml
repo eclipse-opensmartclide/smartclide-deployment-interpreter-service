@@ -1,0 +1,19 @@
+run-master:
+  stage: run-master
+  script:
+    - docker-compose -f docker/master.yml down
+    - docker-compose -f docker/master.yml up -d
+  only:
+    - master
+  tags:
+    - shell
+ 
+run-releases:
+  stage: run-releases
+  script:
+    - docker-compose -f docker/releases.yml down
+    - docker-compose -f docker/releases.yml up -d
+  only:
+    - /^release.*$/
+  tags:
+    - shell

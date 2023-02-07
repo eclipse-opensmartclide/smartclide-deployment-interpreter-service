@@ -1,0 +1,150 @@
+image: dr.kairosds.com/machines/node12.16.2-java11-alpine3.11:1.0
+
+stages:
+  - install_dependencies
+  - build
+  - test
+  - containerization
+  - deploy_beta
+  - deploy_prod
+
+variables:
+    APP_OUTPUT_PATH: "./dist"
+
+global_vars:
+  stage: .pre
+  script:
+    - |
+      echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")-beta.$CI_PIPELINE_IID" >> thisversion.env
+      cat thisversion.env
+  artifacts:
+    reports:
+      #propagate variables into the pipeline level
+      dotenv: 
+        - thisversion.env
+    expire_in: 1 days
+  tags:
+    - runner101
+
+install_dependencies:
+  stage: install_dependencies
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+      paths:
+        - node_modules/
+  script:
+    - >
+      [[ -d node_modules ]] || npm ci --prefer-offline --no-audit --no-optional
+  tags:
+    - runner101
+
+
+build:
+  stage: build
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+      paths:
+        - node_modules/
+      policy: pull
+  script:
+    - npm run build:production -- --base-href .
+  after_script:
+    - cp ./nginx.conf $APP_OUTPUT_PATH
+    - cp ./Dockerfile $APP_OUTPUT_PATH
+  artifacts:
+    expire_in: 1 days
+    paths:
+      - dist
+  tags:
+    - runner101
+
+
+test:
+  stage: test
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+      paths:
+        - node_modules/
+      policy: pull
+  script:
+    - npm run lint
+    - npm run test:ci
+    - npm run sonar -- -Dsonar.host.url=https://sonar.kairosds.com -Dsonar.projectVersion=$PACKAGE_VERSION -Dsonar.login=$SONAR_LOGIN
+  tags:
+    - runner101
+  rules:
+    - if: $UNIT_TESTS_DEFINED
+
+e2e:
+  stage: test
+  services:
+    - postgres:12.1-alpine
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+      paths:
+        - node_modules/
+      policy: pull
+  variables:
+    POSTGRES_USER: $DB_USER
+    POSTGRES_PASSWORD: $DB_PASS
+    POSTGRES_DB: $DB_NAME
+  script:
+    - npm run test:e2e
+  tags:
+    - runner101
+  rules:
+    - if: $E2E_TESTS_DEFINED
+
+dockerize:
+  image: docker:19.03.8
+  stage: containerization
+  services:
+    - docker:dind
+  before_script:
+    - cd $APP_OUTPUT_PATH
+  script:
+    - docker build --pull -t "$DR_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$PACKAGE_VERSION" .
+    - docker push "$DR_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$PACKAGE_VERSION"
+  tags:
+    - runner101-shell
+  only:
+    - develop
+
+helm:
+  image: docker:19.03.8
+  stage: containerization
+  services:
+    - docker:dind
+  script:
+    - helm package chart/ --app-version $PACKAGE_VERSION --version $PACKAGE_VERSION
+    - curl -u $POOL_USER:$POOL_PASS $HELM_URL --upload-file afasia-admin-$PACKAGE_VERSION.tgz
+  tags:
+    - runner101-shell
+  only:
+    - develop
+
+deploy_beta:
+  stage: deploy_beta
+  dependencies:
+    - global_vars
+  script:
+    - helm upgrade afasia-admin-beta $HELM_URL/afasia-admin-$PACKAGE_VERSION.tgz --install --namespace=beta --set image.tag=$PACKAGE_VERSION --set namespace=beta --set ingress.contextPath=afasia-admin --set ingress.domain=beta-apps.kairosds.com --set ingress.entrypoint=websecure --set image.pullPolicy=Always --username $POOL_USER --password $POOL_PASS
+  tags:
+    - runner101-shell
+  only:
+    - develop
+
+deploy_prod:
+  stage: deploy_prod
+  dependencies:
+    - global_vars
+  script:
+    - docker pull "$DR_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$PACKAGE_VERSION"
+    - docker tag "$DR_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$PACKAGE_VERSION" "$DR_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME"
+    - docker push "$DR_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME"
+  tags:
+    - runner101-shell
+  only:
+    - tags
+  except:
+    - branches

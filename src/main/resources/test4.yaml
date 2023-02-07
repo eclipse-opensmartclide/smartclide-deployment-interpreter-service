@@ -1,0 +1,24 @@
+variables:
+  POM_VERSION: readMavenPom().getVersion()
+  BUILD_RELEASE_VERSION: "readMavenPom().getVersion().replace(\"-SNAPSHOT\", \"\")"
+  IS_SNAPSHOT: readMavenPom().getVersion().endsWith("-SNAPSHOT")
+  GIT_TAG_COMMIT: "sh(script: 'git describe --tags --always', returnStdout: true).trim()"
+stages:
+  - stage_one
+  - stage_two
+  - stage_three
+stage_one:
+  stage: stage_one
+  script:
+    - tags_extra = "value_1"
+    - "echo \"tags_extra: ${tags_extra}\""
+stage_two:
+  stage: stage_two
+  script:
+    - "echo \"tags_extra: ${tags_extra}\""
+stage_three:
+  stage: stage_three
+  rules:
+    - if: ' tags_extra != ''bla'' '
+  script:
+    - "echo \"tags_extra: ${tags_extra}\""

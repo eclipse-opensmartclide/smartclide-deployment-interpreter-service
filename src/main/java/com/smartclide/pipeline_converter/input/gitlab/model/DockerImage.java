@@ -7,6 +7,12 @@ public class DockerImage {
 	String name;
 	List<String> entryPoint;
 	
+	public DockerImage() {}
+	
+	public DockerImage(String name) {
+		this.name = name;
+	}
+	
 	public String getName() {
 		return name;
 	}

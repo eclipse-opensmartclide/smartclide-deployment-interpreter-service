@@ -1,0 +1,25 @@
+build:
+  stage: build
+  image: maven:3-jdk-8-alpine
+  services:
+    - name: mysql:5.7      
+  variables:
+    MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    MYSQL_DATABASE: 'devops'
+    MYSQL_USER: 'devops'
+    MYSQL_PASSWORD: $MYSQL_PASSWORD
+    DATABASE_HOST: 'devops-db-test'
+    DATABASE_PORT: '3306'
+    DATABASE_NAME: 'devops'
+    DATABASE_USER: 'devops'
+    DATABASE_PASS: $DATABASE_PASS
+    NEXUS_USER: $NEXUS_USER
+    NEXUS_PASS: $NEXUS_PASS
+    MAVEN_OPTS: -Dmaven.repo.local=/cache/maven.repository
+  script:
+    - mvn clean deploy --settings .m2/settings.xml
+  artifacts:
+    paths:
+      - target
+  tags:
+    - docker

@@ -1,0 +1,16 @@
+version:
+  stage: init
+  image: alpine:latest
+  script:
+    - whoami
+  tags:
+    - docker
+ 
+build:
+  stage: build
+  script:
+    - docker-compose -f docker/test.yml up -d
+    - mvn clean deploy
+    - docker-compose -f docker/test.yml down
+  tags:
+    - shell
