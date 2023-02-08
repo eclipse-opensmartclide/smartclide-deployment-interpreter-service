@@ -1,11 +1,13 @@
 package com.smartclide.pipeline_converter.input.gitlab.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -13,9 +15,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonInclude(Include.NON_DEFAULT)
@@ -42,7 +41,7 @@ public class Pipeline {
 	Map<String, String> variables = new LinkedHashMap<>();
 	List<CacheEntry> cache = new ArrayList<>();
 	@JsonProperty("stages")
-	List<String> stages = new ArrayList<String>();
+	Set<String> stages = new LinkedHashSet<String>();
 	List<IncludeItem> include = new ArrayList<>();
 	Job pages = new Job();
 	Workflow workflow;
@@ -91,11 +90,11 @@ public class Pipeline {
 	public void setCache(List<CacheEntry> cache) {
 		this.cache = cache;
 	}
-	public List<String> getStages() {
+	public Set<String> getStages() {
 		return stages;
 	}
 	public void setStages(List<String> stages) {
-		this.stages = stages;
+		this.stages.addAll(stages);
 	}
 	public List<IncludeItem> getInclude() {
 		return include;
@@ -124,6 +123,7 @@ public class Pipeline {
 			theJob = (Job) job;
 		}
 		this.jobs.put(jobname, theJob);
+		this.stages.add(theJob.getStage());
 	}
 	public Workflow getWorkflow() {
 		return workflow;

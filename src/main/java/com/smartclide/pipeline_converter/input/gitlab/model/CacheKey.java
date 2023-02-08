@@ -6,6 +6,15 @@ import java.util.Objects;
 public class CacheKey {
 	String value;
 	List<String> files;
+	
+	public CacheKey(String value) {
+		this.value = value;
+	}
+	
+	public CacheKey(List<String> files) {
+		this.files = files;
+	}
+	
 	public String getValue() {
 		return value;
 	}
